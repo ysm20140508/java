@@ -6,6 +6,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 /**
+ * session 创建 销毁监听
+ *
  * @author shoumiao_yao
  * @date 2016-07-18
  */

@@ -18,10 +18,4 @@
 
     <context:component-scan base-package="com.jxnu"/>
     <aop:aspectj-autoproxy/>
-    <!--<aop:config>
-       <aop:pointcut id="a" expression="execution(* com.jxnu.aop.*.*(..))"/>
-       <aop:aspect id="b" ref="aopTest">
-           <aop:around method="testPoincutBy" pointcut-ref="a"/>
-       </aop:aspect>
-   </aop:config>-->
 </beans>

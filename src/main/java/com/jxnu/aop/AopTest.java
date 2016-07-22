@@ -24,7 +24,9 @@ public class AopTest {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Class<?>[] types = method.getParameterTypes();
-        System.out.println(types.length);
+        for (Class clazz : types) {
+            System.out.println(clazz.getSimpleName());
+        }
         joinPoint.proceed(args);
         return;
     }
