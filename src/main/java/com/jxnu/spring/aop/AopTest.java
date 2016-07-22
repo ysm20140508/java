@@ -1,10 +1,12 @@
-package com.jxnu.aop;
+package com.jxnu.spring.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -16,11 +18,12 @@ import java.lang.reflect.Method;
 @Component
 @Aspect
 public class AopTest {
+    private final static Logger logger = LoggerFactory.getLogger(AopTest.class);
 
-    @Around("execution(* com.jxnu.aop.*.*(..))")
+    @Around("execution(* com.jxnu.spring.aop.*.*(..))")
     public void testPoincutBy(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        System.out.println("test testPointcut。。。");
+        logger.info("test testPointcut...");
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Class<?>[] types = method.getParameterTypes();
@@ -31,10 +34,9 @@ public class AopTest {
         return;
     }
 
-    @Before("execution(* com.jxnu.aop.*.*(..))")
+    @Before("execution(* com.jxnu.spring.aop.*.*(..))")
     public void TestBefore() {
-        System.out.println("test before。。。");
+        logger.info("test before...");
     }
-
 }
 
