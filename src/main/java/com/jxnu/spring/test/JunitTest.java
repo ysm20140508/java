@@ -13,15 +13,13 @@ import javax.annotation.Resource;
  * @date 2016-07-22
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "")
+@ContextConfiguration(locations = "classpath:spring.xml")
 public class JunitTest {
-
     @Resource
     private Dao dao;
 
-
     @Test
     public void test() {
-
+        dao.test("123", "123");
     }
 }
