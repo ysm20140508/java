@@ -22,4 +22,9 @@ public class JunitTest {
     public void test() {
         dao.test("123", "123");
     }
+
+    @Test
+    public void testAnnotation(){
+        dao.testAopAnnotation();
+    }
 }

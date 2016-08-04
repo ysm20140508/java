@@ -19,4 +19,10 @@ public class Dao {
     public void test(String name, String test) {
         logger.info("test...");
     }
+
+
+    @AopAnnotation
+    public void testAopAnnotation(){
+        logger.info("test aop annotation....");
+    }
 }

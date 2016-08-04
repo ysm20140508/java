@@ -34,9 +34,20 @@ public class AopTest {
         return;
     }
 
+
+    @Around("@annotation(com.jxnu.spring.aop.AopAnnotation)")
+    public void TestAopAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {
+        logger.info("java 注解 annotation");
+        Object[] args = joinPoint.getArgs();
+        joinPoint.proceed(args);
+        return;
+    }
+
+
     @Before("execution(* com.jxnu.spring.aop.*.*(..))")
     public void TestBefore() {
         logger.info("test before...");
     }
+
 }
 
