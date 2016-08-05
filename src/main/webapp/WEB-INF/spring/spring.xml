@@ -16,7 +16,35 @@
 
     <context:component-scan base-package="com.jxnu"/>
     <aop:aspectj-autoproxy/>
-    <task:annotation-driven executor="executor"  scheduler="scheduler"/>
+    <task:annotation-driven executor="executor" scheduler="scheduler"/>
     <task:executor id="executor" pool-size="5"/>
     <task:scheduler id="scheduler" pool-size="5"/>
+
+    <!--<aop:config>
+        <aop:aspect id="aspect" ref="aopTest">
+            <aop:pointcut id="pointcut" expression="execution(* com.jxnu.spring.aop.*.*(..))"/>
+            <aop:around method="testPoincutBy" pointcut-ref="pointcut" />
+        </aop:aspect>
+    </aop:config>-->
+
+    <bean id="conversionService"  class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="registerDefaultFormatters" value="false"/>
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+            </set>
+        </property>
+        <property name="formatterRegistrars">
+            <set>
+                <bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+                    <property name="dateFormatter">
+                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean" >
+                            <property name="pattern" value="yyyMMdd" />
+                         </bean>
+                    </property>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
 </beans>
