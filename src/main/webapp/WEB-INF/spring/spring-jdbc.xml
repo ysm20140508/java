@@ -3,16 +3,21 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd
                   		http://www.springframework.org/schema/tx
 						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						 http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd
 						http://www.springframework.org/schema/aop
 						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath*:jdbc.properties" />
+        <property name="locations" value="classpath*:jdbc.properties"/>
     </bean>
+
+    <context:property-placeholder location="jdbc.properties" />
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="url" value="${jdbc_url}"/>
@@ -40,25 +45,29 @@
     <tx:advice id="txAdvice" transaction-manager="txManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true"/>
-            <tx:method name="*" />
+            <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
 
     <aop:config>
         <aop:pointcut id="aop" expression="execution(* com.jxnu.spring.aop.*.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="aop" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="aop"/>
     </aop:config>
 
     <!--基于注解事务管理-->
-    <tx:annotation-driven transaction-manager="txManager" />
+    <tx:annotation-driven/>
 
     <bean id="orderTx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
-        <qualifier value="orderTx" />
+        <qualifier value="orderTx"/>
     </bean>
 
     <bean id="dataTx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
         <qualifier value="dataTx"/>
+    </bean>
+
+    <bean id="jdbcTemple" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 </beans>
