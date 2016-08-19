@@ -17,12 +17,12 @@ public class Dao {
 
     @Async
     public void test(String name, String test) {
-        logger.info("test...");
+        logger.info("Elasticsearch...");
     }
 
 
     @AopAnnotation
     public void testAopAnnotation(){
-        logger.info("test aop annotation....");
+        logger.info("Elasticsearch aop annotation....");
     }
 }

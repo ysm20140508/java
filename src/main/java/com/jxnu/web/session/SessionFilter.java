@@ -1,4 +1,4 @@
-package com.jxnu.session;
+package com.jxnu.web.session;
 
 import org.apache.commons.lang3.StringUtils;
 

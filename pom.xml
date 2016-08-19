@@ -97,6 +97,18 @@
             <version>1.0.24</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>rest</artifactId>
+            <version>5.0.0-alpha5</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>javaWeb</finalName>

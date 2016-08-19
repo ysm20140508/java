@@ -1,4 +1,4 @@
-package com.jxnu.listener;
+package com.jxnu.web.listener;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

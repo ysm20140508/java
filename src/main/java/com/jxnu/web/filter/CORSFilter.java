@@ -1,4 +1,4 @@
-package com.jxnu.filter;
+package com.jxnu.web.filter;
 
 import org.apache.commons.lang3.StringUtils;
 

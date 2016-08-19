@@ -1,8 +1,7 @@
-package com.jxnu.util;
+package com.jxnu.web.util;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 

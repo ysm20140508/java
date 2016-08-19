@@ -1,4 +1,4 @@
-package com.jxnu.util;
+package com.jxnu.web.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

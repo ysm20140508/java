@@ -1,4 +1,4 @@
-package com.jxnu.session;
+package com.jxnu.web.session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

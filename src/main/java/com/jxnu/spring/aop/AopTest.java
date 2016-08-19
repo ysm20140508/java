@@ -23,7 +23,7 @@ public class AopTest {
     @Around("execution(* com.jxnu.spring.aop.*.*(..))")
     public void testPoincutBy(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        logger.info("test testPointcut...");
+        logger.info("Elasticsearch testPointcut...");
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Class<?>[] types = method.getParameterTypes();
@@ -46,7 +46,7 @@ public class AopTest {
 
     @Before("execution(* com.jxnu.spring.aop.*.*(..))")
     public void TestBefore() {
-        logger.info("test before...");
+        logger.info("Elasticsearch before...");
     }
 
 }

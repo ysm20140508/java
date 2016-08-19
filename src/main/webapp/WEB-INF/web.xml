@@ -2,7 +2,7 @@
          xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <listener>
-        <listener-class>com.jxnu.listener.SessionListener</listener-class>
+        <listener-class>com.jxnu.web.listener.SessionListener</listener-class>
     </listener>
 
     <listener>
@@ -11,7 +11,7 @@
 
     <filter>
         <filter-name>sessionFilter</filter-name>
-        <filter-class>com.jxnu.session.SessionFilter</filter-class>
+        <filter-class>com.jxnu.web.session.SessionFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>sessionFilter</filter-name>
@@ -20,7 +20,7 @@
 
     <servlet>
         <servlet-name>test</servlet-name>
-        <servlet-class>com.jxnu.servlet.TestServlet</servlet-class>
+        <servlet-class>com.jxnu.web.servlet.TestServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>test</servlet-name>

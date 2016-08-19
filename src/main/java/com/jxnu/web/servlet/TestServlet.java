@@ -1,6 +1,6 @@
-package com.jxnu.servlet;
+package com.jxnu.web.servlet;
 
-import com.jxnu.util.ApplicationContextUtils;
+import com.jxnu.web.util.ApplicationContextUtils;
 import com.jxnu.spring.aop.Dao;
 
 import javax.servlet.ServletException;
@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 public class TestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Dao test = (Dao) ApplicationContextUtils.getBean("test");
+        Dao test = (Dao) ApplicationContextUtils.getBean("Elasticsearch");
         test.test("123","123");
         resp.setContentType("text/html;charset=UTF-8");
         PrintWriter out = resp.getWriter();
