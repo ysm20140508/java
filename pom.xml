@@ -109,6 +109,12 @@
             <version>5.0.0-alpha5</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>2.3.5</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>javaWeb</finalName>
