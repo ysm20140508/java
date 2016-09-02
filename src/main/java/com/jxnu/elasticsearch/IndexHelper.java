@@ -1,30 +1,32 @@
 package com.jxnu.elasticsearch;
 
-import com.alibaba.fastjson.JSONObject;
-import com.sun.org.apache.bcel.internal.generic.InstructionConstants;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ListenableActionFuture;
-import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
+import org.elasticsearch.index.query.IdsQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,7 +49,8 @@ public class IndexHelper {
      * @return
      */
     public boolean type(String index, String type) {
-        IndexRequest request = new IndexRequest(index, type);
+        IndexRequest request = Requests.indexRequest(index);
+        request.type(type);
         ActionFuture<IndexResponse> response = client.index(request);
         IndexResponse indexResponse = response.actionGet(5, TimeUnit.SECONDS);
         if (!response.isDone() || indexResponse == null) {
@@ -65,7 +68,7 @@ public class IndexHelper {
      * @return
      */
     public boolean index(String index) {
-        IndexRequest request = new IndexRequest(index);
+        IndexRequest request =  Requests.indexRequest(index);
         ActionFuture<IndexResponse> response = client.index(request);
         IndexResponse indexResponse = response.actionGet(5, TimeUnit.SECONDS);
         if (!response.isDone() || indexResponse == null) {
@@ -127,8 +130,7 @@ public class IndexHelper {
      * @return
      */
     public String findDocumentById(String index,String type,String id){
-        GetRequest request=new GetRequest();
-        request.index(index);
+        GetRequest request=Requests.getRequest(index);
         request.type(type);
         request.id(id);
         ActionFuture<GetResponse> future=client.get(request);
@@ -141,28 +143,29 @@ public class IndexHelper {
     }
 
     /**
-     * 批量查找document
+     * 根据ids批量查找
      * @param index
      * @param type
-     * @param ids
+     * @param id
      * @return
      */
-    public Map<String,String> batchFind(String index,String type,String... ids){
-        BulkRequestBuilder builder=client.prepareBulk();
-        for(String id : ids){
-            IndexRequest request=new IndexRequest();
-            request.index(index);
-            request.type(type);
-            request.id(id);
-            builder.add(request);
+    public List<String> findDocumentByIds(String index,String type,String... id){
+        List<String> documents=new ArrayList<String>();
+        SearchRequest request=Requests.searchRequest(index);
+        SearchSourceBuilder sourceBuilder=new SearchSourceBuilder();
+        QueryBuilder queryBuilder=new IdsQueryBuilder(type).addIds(id);
+        sourceBuilder.query(queryBuilder);
+        request.source(sourceBuilder);
+        ActionFuture<SearchResponse> future=client.search(request);
+        SearchResponse response=future.actionGet(5,TimeUnit.SECONDS);
+        SearchHits searchHits=response.getHits();
+        SearchHit[] searchHitss=searchHits.getHits();
+        for(SearchHit searchHit : searchHitss){
+           String source=searchHit.getSourceAsString();
+           documents.add(source);
         }
-        ListenableActionFuture<BulkResponse> future=builder.execute();
-        BulkResponse responses=future.actionGet(5,TimeUnit.SECONDS);
-        BulkItemResponse[] itemResponses=responses.getItems();
-        for(BulkItemResponse itemResponse : itemResponses){
-             IndexResponse indexResponse=itemResponse.getResponse();
-        }
-        return null;
+        response.getFailedShards();
+        return documents;
     }
 
     /**
@@ -196,8 +199,7 @@ public class IndexHelper {
     public Boolean batchDeleteDocumentById(String index,String type,String... ids){
         BulkRequestBuilder builder=client.prepareBulk();
         for(String id : ids){
-            DeleteRequest request=new DeleteRequest();
-            request.index(index);
+            DeleteRequest request=Requests.deleteRequest(index);
             request.type(type);
             request.id(id);
             builder.add(request);
@@ -236,16 +238,19 @@ public class IndexHelper {
 
 
     public static void main(String[] args) {
-        Map<String, String> map = new HashMap<String, String>();
+        /*Map<String, String> map = new HashMap<String, String>();
         map.put("cluster.name", "es");
         map.put("client.transport.sniff", "true");
         Client client=ClientFactory.createTransportClient(map, "192.168.179.128", 9300);
         IndexHelper indexHelper = new IndexHelper(client);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", "userName");/*
+        jsonObject.put("userName", "userName");*//*
         String id= indexHelper.document("client", "type1", jsonObject.toJSONString());
-        indexHelper.batchDocument("client","type2", Collections.singletonList(jsonObject.toJSONString()));*/
-        indexHelper.batchDeleteDocumentById("client","type2",
-                new String[]{"AVa3y_HvTTXp8FrcVIc0"});
+        indexHelper.batchDocument("client","type2", Collections.singletonList(jsonObject.toJSONString()));*//*
+        indexHelper.findDocumentByIds("client","type1",
+                new String[]{"AVa3zCgvTTXp8FrcVIc1",
+                             "AVa3zQPuTTXp8FrcVIc3",
+                             "AVa3y_GGTTXp8FrcVIcz"});*/
+        System.out.println(System.currentTimeMillis());
     }
 }
