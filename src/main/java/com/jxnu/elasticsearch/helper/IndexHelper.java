@@ -1,5 +1,6 @@
-package com.jxnu.elasticsearch;
+package com.jxnu.elasticsearch.helper;
 
+import com.jxnu.elasticsearch.client.EsTransportClient;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -24,7 +25,10 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,12 +37,16 @@ import java.util.concurrent.TimeUnit;
  * @author shoumiao_yao
  * @date 2016-08-22
  */
+@Component
 public class IndexHelper {
     private Logger logger = LoggerFactory.getLogger(IndexHelper.class);
+    @Resource(name = "transportClient")
+    private EsTransportClient esClient;
     private Client client;
 
-    public IndexHelper(Client client) {
-        this.client = client;
+    @PostConstruct
+    public void init(){
+        this.client= esClient.getClient();
     }
 
     /**
@@ -68,7 +76,7 @@ public class IndexHelper {
      * @return
      */
     public boolean index(String index) {
-        IndexRequest request =  Requests.indexRequest(index);
+        IndexRequest request = Requests.indexRequest(index);
         ActionFuture<IndexResponse> response = client.index(request);
         IndexResponse indexResponse = response.actionGet(5, TimeUnit.SECONDS);
         if (!response.isDone() || indexResponse == null) {
@@ -124,45 +132,48 @@ public class IndexHelper {
 
     /**
      * 根据id查找document
+     *
      * @param index
      * @param type
      * @param id
      * @return
      */
-    public String findDocumentById(String index,String type,String id){
-        GetRequest request=Requests.getRequest(index);
+    public String findDocumentById(String index, String type, String id) {
+        GetRequest request = Requests.getRequest(index);
         request.type(type);
         request.id(id);
-        ActionFuture<GetResponse> future=client.get(request);
-        GetResponse response=future.actionGet(5,TimeUnit.SECONDS);
-        if(!future.isDone() || response==null){
+        ActionFuture<GetResponse> future = client.get(request);
+        GetResponse response = future.actionGet(5, TimeUnit.SECONDS);
+        if (!future.isDone() || response == null) {
             return null;
-        }else {
+        } else {
             return response.getSourceAsString();
         }
     }
 
     /**
      * 根据ids批量查找
+     *
      * @param index
      * @param type
      * @param id
      * @return
      */
-    public List<String> findDocumentByIds(String index,String type,String... id){
-        List<String> documents=new ArrayList<String>();
-        SearchRequest request=Requests.searchRequest(index);
-        SearchSourceBuilder sourceBuilder=new SearchSourceBuilder();
-        QueryBuilder queryBuilder=new IdsQueryBuilder(type).addIds(id);
+    public List<String> findDocumentByIds(String index, String type, String... id) {
+        List<String> documents = new ArrayList<String>();
+        SearchRequest request = Requests.searchRequest(index);
+        request.types(type);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        QueryBuilder queryBuilder = new IdsQueryBuilder(type).addIds(id);
         sourceBuilder.query(queryBuilder);
         request.source(sourceBuilder);
-        ActionFuture<SearchResponse> future=client.search(request);
-        SearchResponse response=future.actionGet(5,TimeUnit.SECONDS);
-        SearchHits searchHits=response.getHits();
-        SearchHit[] searchHitss=searchHits.getHits();
-        for(SearchHit searchHit : searchHitss){
-           String source=searchHit.getSourceAsString();
-           documents.add(source);
+        ActionFuture<SearchResponse> future = client.search(request);
+        SearchResponse response = future.actionGet(5, TimeUnit.SECONDS);
+        SearchHits searchHits = response.getHits();
+        SearchHit[] searchHitss = searchHits.getHits();
+        for (SearchHit searchHit : searchHitss) {
+            String source = searchHit.getSourceAsString();
+            documents.add(source);
         }
         response.getFailedShards();
         return documents;
@@ -170,87 +181,72 @@ public class IndexHelper {
 
     /**
      * 根据id 删除索引
+     *
      * @param index
      * @param type
      * @param id
      * @return
      */
-    public Boolean deleteDocumentById(String index,String type,String id){
-        DeleteRequest request=new DeleteRequest();
+    public Boolean deleteDocumentById(String index, String type, String id) {
+        DeleteRequest request = new DeleteRequest();
         request.index(index);
         request.type(type);
         request.id(id);
-        ActionFuture<DeleteResponse> future=client.delete(request);
-        DeleteResponse response=future.actionGet(5,TimeUnit.SECONDS);
-        if(!future.isDone() || response !=null){
+        ActionFuture<DeleteResponse> future = client.delete(request);
+        DeleteResponse response = future.actionGet(5, TimeUnit.SECONDS);
+        if (!future.isDone() || response != null) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
     /**
      * 批量删除索引
+     *
      * @param index
      * @param type
      * @param ids
      * @return
      */
-    public Boolean batchDeleteDocumentById(String index,String type,String... ids){
-        BulkRequestBuilder builder=client.prepareBulk();
-        for(String id : ids){
-            DeleteRequest request=Requests.deleteRequest(index);
+    public Boolean batchDeleteDocumentById(String index, String type, String... ids) {
+        BulkRequestBuilder builder = client.prepareBulk();
+        for (String id : ids) {
+            DeleteRequest request = Requests.deleteRequest(index);
             request.type(type);
             request.id(id);
             builder.add(request);
         }
-        ListenableActionFuture<BulkResponse> future=builder.execute();
-        BulkResponse responses=future.actionGet(5,TimeUnit.SECONDS);
-        if(!future.isDone() || responses !=null){
+        ListenableActionFuture<BulkResponse> future = builder.execute();
+        BulkResponse responses = future.actionGet(5, TimeUnit.SECONDS);
+        if (!future.isDone() || responses != null) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
     /**
      * 更新指定的document
+     *
      * @param index
      * @param type
      * @param id
      * @param json
      * @return
      */
-    public Boolean update(String index,String type,String id,String json){
-        UpdateRequest request=new UpdateRequest();
+    public Boolean update(String index, String type, String id, String json) {
+        UpdateRequest request = new UpdateRequest();
         request.index(index);
         request.type(type);
         request.id(id);
         request.doc(json);
-        ActionFuture<UpdateResponse> future=client.update(request);
-        UpdateResponse response=future.actionGet(5,TimeUnit.SECONDS);
-        if(!future.isDone() || response !=null){
+        ActionFuture<UpdateResponse> future = client.update(request);
+        UpdateResponse response = future.actionGet(5, TimeUnit.SECONDS);
+        if (!future.isDone() || response != null) {
             return false;
-        }else {
+        } else {
             return true;
         }
-    }
-
-
-    public static void main(String[] args) {
-        /*Map<String, String> map = new HashMap<String, String>();
-        map.put("cluster.name", "es");
-        map.put("client.transport.sniff", "true");
-        Client client=ClientFactory.createTransportClient(map, "192.168.179.128", 9300);
-        IndexHelper indexHelper = new IndexHelper(client);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", "userName");*//*
-        String id= indexHelper.document("client", "type1", jsonObject.toJSONString());
-        indexHelper.batchDocument("client","type2", Collections.singletonList(jsonObject.toJSONString()));*//*
-        indexHelper.findDocumentByIds("client","type1",
-                new String[]{"AVa3zCgvTTXp8FrcVIc1",
-                             "AVa3zQPuTTXp8FrcVIc3",
-                             "AVa3y_GGTTXp8FrcVIcz"});*/
-        System.out.println(System.currentTimeMillis());
     }
 }
