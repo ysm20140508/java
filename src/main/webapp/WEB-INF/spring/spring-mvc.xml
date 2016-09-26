@@ -14,8 +14,4 @@
 						http://www.springframework.org/schema/task/spring-task-3.0.xsd
 						http://www.springframework.org/schema/aop
 						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath*:es.properties,jdbc.properties"/>
-    </bean>
 </beans>

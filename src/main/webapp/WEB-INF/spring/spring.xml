@@ -21,7 +21,12 @@
     <task:scheduler id="scheduler" pool-size="5"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath*:es.properties,jdbc.properties"/>
+        <property name="locations">
+            <array>
+                <value>classpath*:jdbc.properties</value>
+                <value>classpath*:es.properties</value>
+            </array>
+        </property>
     </bean>
 
     <!--<aop:config>
@@ -31,26 +36,25 @@
         </aop:aspect>
     </aop:config>-->
 
-    <bean id="conversionService"  class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="registerDefaultFormatters" value="false"/>
         <property name="formatters">
             <set>
-                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory"/>
             </set>
         </property>
         <property name="formatterRegistrars">
             <set>
                 <bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
                     <property name="dateFormatter">
-                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean" >
-                            <property name="pattern" value="yyyMMdd" />
-                         </bean>
+                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+                            <property name="pattern" value="yyyMMdd"/>
+                        </bean>
                     </property>
                 </bean>
             </set>
         </property>
     </bean>
 
-    <import resource="spring-jdbc.xml" />
-
+    <import resource="spring-jdbc.xml"/>
 </beans>

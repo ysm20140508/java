@@ -92,6 +92,12 @@
         </dependency>
 
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.39</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.24</version>
@@ -114,7 +120,6 @@
             <artifactId>elasticsearch</artifactId>
             <version>2.3.5</version>
         </dependency>
-
     </dependencies>
     <build>
         <finalName>javaWeb</finalName>
