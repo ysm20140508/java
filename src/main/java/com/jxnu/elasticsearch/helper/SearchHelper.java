@@ -13,46 +13,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * elasticsearch 查询帮助类
+ *
  * @author shoumiao_yao
  * @date 2016-09-20
  */
 public class SearchHelper {
     private Logger logger = LoggerFactory.getLogger(SearchHelper.class);
-    private String[] indexs;
-    private String[] types;
-    private SearchRequest request = new SearchRequest();
+    private Integer start = 0;
+    private Integer limit = 10;
+    private SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
     private List<QueryBuilder> mustQueryS = new ArrayList<QueryBuilder>();
     private List<QueryBuilder> mustNotQueryS = new ArrayList<QueryBuilder>();
     private List<QueryBuilder> filterQueryS = new ArrayList<QueryBuilder>();
     private List<QueryBuilder> shouldQueryS = new ArrayList<QueryBuilder>();
 
-    public SearchHelper(String[] indexs, String[] types) {
-        this.indexs = indexs;
-        this.types = types;
-    }
-
-    public SearchHelper must(List<QueryBuilder> querys) {
+    /**
+     * and 查询
+     * @param querys
+     * @param isClear
+     * @return
+     */
+    public SearchHelper must(List<QueryBuilder> querys,Boolean isClear) {
+        if(isClear) this.mustQueryS.clear();
         if (CollectionUtils.isEmpty(querys)) return this;
-        mustQueryS.addAll(querys);
+        this.mustQueryS.addAll(querys);
         return this;
     }
 
-    public SearchHelper mustNot(List<QueryBuilder> querys) {
+    /**
+     * 否定
+     * @param querys
+     * @param isClear
+     * @return
+     */
+    public SearchHelper mustNot(List<QueryBuilder> querys,Boolean isClear) {
+        if(isClear) this.mustNotQueryS.clear();
         if (CollectionUtils.isEmpty(querys)) return this;
-        mustNotQueryS.addAll(querys);
+        this.mustNotQueryS.addAll(querys);
         return this;
     }
 
-    public SearchHelper filter(List<QueryBuilder> querys) {
+    /**
+     * 过滤
+     * @param querys
+     * @param isClear
+     * @return
+     */
+    public SearchHelper filter(List<QueryBuilder> querys,Boolean isClear) {
+        if(isClear) this.filterQueryS.clear();
         if (CollectionUtils.isEmpty(querys)) return this;
-        filterQueryS.addAll(querys);
+        this.filterQueryS.addAll(querys);
         return this;
     }
 
-    public SearchHelper should(List<QueryBuilder> querys) {
+    /**
+     * 或者
+     * @param querys
+     * @param isClear
+     * @return
+     */
+    public SearchHelper should(List<QueryBuilder> querys,Boolean isClear) {
+        if(isClear) this.shouldQueryS.clear();
         if (CollectionUtils.isEmpty(querys)) return this;
-        shouldQueryS.addAll(querys);
+        this.shouldQueryS.addAll(querys);
         return this;
+    }
+
+    /**
+     * 清空查询条件
+     */
+    public void empty() {
+        this.mustQueryS.clear();
+        this.mustNotQueryS.clear();
+        this.filterQueryS.clear();
+        this.shouldQueryS.clear();
     }
 
     /**
@@ -60,13 +95,7 @@ public class SearchHelper {
      *
      * @return
      */
-    public SearchRequest build() {
-        if (!ArrayUtils.isEmpty(this.indexs)) {
-            this.request.indices(this.indexs);
-        }
-        if (!ArrayUtils.isEmpty(this.types)) {
-            this.request.types(this.types);
-        }
+    public SearchSourceBuilder build() {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         for (QueryBuilder builder : mustQueryS) {
             boolQueryBuilder.must(builder);
@@ -80,11 +109,9 @@ public class SearchHelper {
         for (QueryBuilder builder : shouldQueryS) {
             boolQueryBuilder.should(builder);
         }
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(boolQueryBuilder);
-        logger.info("indexs:{},types:{},query build:{}", indexs, types, boolQueryBuilder);
-        this.request.source(sourceBuilder);
-        return this.request;
+        this.sourceBuilder.query(boolQueryBuilder);
+        logger.info("query build:{}", boolQueryBuilder);
+        return this.sourceBuilder;
     }
 
 
@@ -275,26 +302,20 @@ public class SearchHelper {
         return this;
     }
 
-
-    /**
-     * 参数设置
-     */
-    public static class Build {
-        private String[] indexs;
-        private String[] types;
-
-        public Build indexs(String... indexs) {
-            this.indexs = indexs;
-            return this;
-        }
-
-        public Build types(String... types) {
-            this.types = types;
-            return this;
-        }
-
-        public SearchHelper build() {
-            return new SearchHelper(this.indexs, this.types);
-        }
+    public void setStart(Integer start) {
+        this.start = start;
     }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer start() {
+        return this.start;
+    }
+
+    public Integer limit() {
+        return this.limit;
+    }
+
 }
