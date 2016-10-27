@@ -25,8 +25,8 @@ public class BaseEsDaoImpl<T extends BaseModel> implements BaseEsDao<T> {
     @Resource(name = "transportClient")
     private EsClient esClient;
 
-    public SearchHelper getSearchHelper() {
-        return this.helper.searchHelper();
+    public SearchHelper SearchHelper() {
+        return new SearchHelper();
     }
 
     @PostConstruct
@@ -70,9 +70,9 @@ public class BaseEsDaoImpl<T extends BaseModel> implements BaseEsDao<T> {
         return helper.update(model.getId(), JSON.toJSONString(t));
     }
 
-    public List<T> query() {
+    public List<T> query(SearchHelper searchHelper) {
         List<T> t = new ArrayList<T>();
-        List<String> jsonS = helper.query();
+        List<String> jsonS = helper.query(searchHelper);
         for (String json : jsonS) {
             t.add((T) JSON.parseObject(json, entityClass));
         }

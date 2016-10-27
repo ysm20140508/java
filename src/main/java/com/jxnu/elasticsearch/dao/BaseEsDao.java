@@ -1,5 +1,7 @@
 package com.jxnu.elasticsearch.dao;
 
+import com.jxnu.elasticsearch.helper.SearchHelper;
+
 import java.util.List;
 
 /**
@@ -41,8 +43,9 @@ public interface BaseEsDao<T> {
 
     /**
      * 查询
+     *
      * @return
      */
-    public List<T> query();
+    public List<T> query(SearchHelper searchHelper);
 
 }

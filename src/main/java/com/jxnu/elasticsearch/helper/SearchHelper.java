@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,10 +35,10 @@ public class SearchHelper {
      * @param isClear
      * @return
      */
-    public SearchHelper must(List<QueryBuilder> querys,Boolean isClear) {
+    public SearchHelper must(Boolean isClear,QueryBuilder... querys) {
         if(isClear) this.mustQueryS.clear();
-        if (CollectionUtils.isEmpty(querys)) return this;
-        this.mustQueryS.addAll(querys);
+        if (querys==null) return this;
+        this.mustQueryS.addAll(Arrays.asList(querys));
         return this;
     }
 
@@ -47,10 +48,10 @@ public class SearchHelper {
      * @param isClear
      * @return
      */
-    public SearchHelper mustNot(List<QueryBuilder> querys,Boolean isClear) {
+    public SearchHelper mustNot(Boolean isClear,QueryBuilder... querys) {
         if(isClear) this.mustNotQueryS.clear();
-        if (CollectionUtils.isEmpty(querys)) return this;
-        this.mustNotQueryS.addAll(querys);
+        if (querys==null) return this;
+        this.mustNotQueryS.addAll(Arrays.asList(querys));
         return this;
     }
 
@@ -60,10 +61,10 @@ public class SearchHelper {
      * @param isClear
      * @return
      */
-    public SearchHelper filter(List<QueryBuilder> querys,Boolean isClear) {
+    public SearchHelper filter(Boolean isClear,QueryBuilder... querys) {
         if(isClear) this.filterQueryS.clear();
-        if (CollectionUtils.isEmpty(querys)) return this;
-        this.filterQueryS.addAll(querys);
+        if (querys==null) return this;
+        this.filterQueryS.addAll(Arrays.asList(querys));
         return this;
     }
 
@@ -73,10 +74,10 @@ public class SearchHelper {
      * @param isClear
      * @return
      */
-    public SearchHelper should(List<QueryBuilder> querys,Boolean isClear) {
+    public SearchHelper should(Boolean isClear,QueryBuilder... querys) {
         if(isClear) this.shouldQueryS.clear();
-        if (CollectionUtils.isEmpty(querys)) return this;
-        this.shouldQueryS.addAll(querys);
+        if (querys==null) return this;
+        this.shouldQueryS.addAll(Arrays.asList(querys));
         return this;
     }
 
@@ -90,12 +91,7 @@ public class SearchHelper {
         this.shouldQueryS.clear();
     }
 
-    /**
-     * 构建SearchRequest对象
-     *
-     * @return
-     */
-    public SearchSourceBuilder build() {
+    public BoolQueryBuilder buildBoolQueryBuilder(){
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         for (QueryBuilder builder : mustQueryS) {
             boolQueryBuilder.must(builder);
@@ -109,6 +105,16 @@ public class SearchHelper {
         for (QueryBuilder builder : shouldQueryS) {
             boolQueryBuilder.should(builder);
         }
+        return boolQueryBuilder;
+    }
+
+    /**
+     * 构建SearchRequest对象
+     *
+     * @return
+     */
+    public SearchSourceBuilder build() {
+        BoolQueryBuilder boolQueryBuilder=buildBoolQueryBuilder();
         this.sourceBuilder.query(boolQueryBuilder);
         logger.info("query build:{}", boolQueryBuilder);
         return this.sourceBuilder;
@@ -299,6 +305,30 @@ public class SearchHelper {
         if (StringUtils.isEmpty(field) || StringUtils.isEmpty(regexp)) return this;
         RegexpQueryBuilder builder = QueryBuilders.regexpQuery(field, regexp);
         this.mustQueryS.add(builder);
+        return this;
+    }
+
+    /**
+     * 单个属性匹配
+     * @param field
+     * @param value
+     * @return
+     */
+    public SearchHelper match(String field,Object value){
+        MatchQueryBuilder matchQueryBuilder=QueryBuilders.matchQuery(field,value);
+        this.mustQueryS.add(matchQueryBuilder);
+        return this;
+    }
+
+    /**
+     * 多个属性匹配
+     * @param value
+     * @param field
+     * @return
+     */
+    public SearchHelper multiTermMatch(Object value,String... field){
+        MultiMatchQueryBuilder multiMatchQueryBuilder=QueryBuilders.multiMatchQuery(value,field);
+        this.mustQueryS.add(multiMatchQueryBuilder);
         return this;
     }
 

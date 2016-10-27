@@ -36,11 +36,6 @@ public class ElasticSearchHelper {
     private String type;
     private Client client;
     private IndexHelper indexHelper;
-    private SearchHelper searchHelper;
-
-    public SearchHelper searchHelper() {
-        return this.searchHelper;
-    }
 
     /**
      * 构造器
@@ -54,7 +49,6 @@ public class ElasticSearchHelper {
         this.type = type;
         this.client = esClient.getClient();
         this.indexHelper = new IndexHelper.Build().index(this.index).type(this.type).build();
-        this.searchHelper = new SearchHelper();
     }
 
     /**
@@ -143,18 +137,22 @@ public class ElasticSearchHelper {
      *
      * @return
      */
-    public List<String> query() {
+    public List<String> query(SearchHelper searchHelper) {
         List<String> jsons = new ArrayList<String>();
-        SearchRequestBuilder builder = client.prepareSearch().setIndices(this.index).setTypes(this.type);
-        builder.setFrom(searchHelper.start());
-        builder.setTerminateAfter(searchHelper.limit());
-        builder.internalBuilder(searchHelper.build());
-        SearchResponse response = builder.execute().actionGet(this.timeOut, TimeUnit.SECONDS);
-        if (response == null) return jsons;
-        SearchHits hits = response.getHits();
-        for (SearchHit hit : hits) {
-            String source = hit.getSourceAsString();
-            jsons.add(source);
+        try {
+            SearchRequestBuilder builder = client.prepareSearch().setIndices(this.index).setTypes(this.type);
+            builder.setFrom(searchHelper.start());
+            builder.setTerminateAfter(searchHelper.limit());
+            builder.internalBuilder(searchHelper.build());
+            SearchResponse response = builder.execute().actionGet(this.timeOut, TimeUnit.SECONDS);
+            if (response == null) return jsons;
+            SearchHits hits = response.getHits();
+            for (SearchHit hit : hits) {
+                String source = hit.getSourceAsString();
+                jsons.add(source);
+            }
+        } catch (Exception e) {
+            logger.error("query error:{}",ExceptionUtils.getStackTrace(e));
         }
         return jsons;
     }
