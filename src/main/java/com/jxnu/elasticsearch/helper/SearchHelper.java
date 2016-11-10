@@ -2,12 +2,10 @@ package com.jxnu.elasticsearch.helper;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -315,7 +313,8 @@ public class SearchHelper {
      * @return
      */
     public SearchHelper match(String field,Object value){
-        MatchQueryBuilder matchQueryBuilder=QueryBuilders.matchQuery(field,value);
+        MatchQueryBuilder matchQueryBuilder=QueryBuilders.matchQuery(field, value);
+        matchQueryBuilder.type(MatchQueryBuilder.Type.PHRASE);
         this.mustQueryS.add(matchQueryBuilder);
         return this;
     }
@@ -323,11 +322,11 @@ public class SearchHelper {
     /**
      * 多个属性匹配
      * @param value
-     * @param field
+     * @param fields
      * @return
      */
-    public SearchHelper multiTermMatch(Object value,String... field){
-        MultiMatchQueryBuilder multiMatchQueryBuilder=QueryBuilders.multiMatchQuery(value,field);
+    public SearchHelper multiTermMatch(Object value,String... fields){
+        MultiMatchQueryBuilder multiMatchQueryBuilder=QueryBuilders.multiMatchQuery(value, fields);
         this.mustQueryS.add(multiMatchQueryBuilder);
         return this;
     }

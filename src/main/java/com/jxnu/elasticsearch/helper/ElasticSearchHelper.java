@@ -143,6 +143,7 @@ public class ElasticSearchHelper {
             SearchRequestBuilder builder = client.prepareSearch().setIndices(this.index).setTypes(this.type);
             builder.setFrom(searchHelper.start());
             builder.setTerminateAfter(searchHelper.limit());
+            builder.setSize(searchHelper.limit());
             builder.internalBuilder(searchHelper.build());
             SearchResponse response = builder.execute().actionGet(this.timeOut, TimeUnit.SECONDS);
             if (response == null) return jsons;
