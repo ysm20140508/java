@@ -30,7 +30,7 @@
       }
       //从新设置当前序号
       this.nextValue = nextSequence;
- * 5: EventProcessor 其实相当于一个```消费线程,根据用户的对应的```等待策略从环中获取数据,然后把消费的数据交给```EventHandler处理
+ * 5: EventProcessor 其实相当于一个```消费线程```,根据用户的对应的```等待策略从环中获取数据,然后把消费的数据交给```EventHandler```处理
  *
  *
  *
