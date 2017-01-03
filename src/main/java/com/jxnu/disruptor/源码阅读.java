@@ -36,6 +36,10 @@
 
  * 5: EventProcessor 其实相当于一个消费线程,根据用户的对应的等待策略从环中获取数据,然后把消费的数据交给EventHandler处理
  *
+ * 6: RingBuffer
+ *    主要属性两个  object[] entries :初始时全部填充用户指定的对象 大小是：bufferSize+2* 128字节  注意: Unsafe使用及获取指定数据指定位置的对象
+ *                      sequencer : 通过定序器获取可得到的下一个序号
+ *
  *
  *
  *
