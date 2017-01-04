@@ -36,5 +36,7 @@ public class UnsafeTry {
         logger.info(String.valueOf(THE_UNSAFE.arrayIndexScale(Object[].class)));
         //arrayBaseOffset方法是一个本地方法，可以获取数组第一个元素的偏移地址
         logger.info(String.valueOf(THE_UNSAFE.arrayBaseOffset(Object[].class)));
+        //分配直接内存
+        THE_UNSAFE.allocateMemory(128l);
     }
 }
