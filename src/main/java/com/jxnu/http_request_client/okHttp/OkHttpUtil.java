@@ -182,18 +182,18 @@ public class OkHttpUtil {
     public static void main(String[] args) throws IOException {
         String host = "localhost:8080";
         //登录系统 获取cookie (get 请求)
-        String testLoginUrl = "http://" + host + "/crmcommon/extcontrol/rest/v1/testLogin?oid=579749c500b02c4cdc762f70";
+        String testLoginUrl = "###";
         Response response = OkHttpUtil.get(testLoginUrl);
         String cookie = response.headers().get("Set-Cookie");
         //(post 表单)
-        String formUrl="http://" + host + "/crmcommon/interapp/rest/v1/callback";
+        String formUrl="###";
         Map<String,String> formParams=new HashMap<String, String>();
         formParams.put("sn","sn");
         formParams.put("event","event");
         Response formResponse=OkHttpUtil.post(formParams,null,formUrl);
         logger.info("callback:{}",formResponse.body().string());
         //文档列表 (post json)
-        String fileUrl = "http://" + host + "/crmcommon/file/filelist";
+        String fileUrl = "###";
         Map<String, String> heads = new HashMap<String, String>();
         heads.put("Cookie", cookie);
         Map<String, String> params = new HashMap<String, String>();
@@ -202,7 +202,7 @@ public class OkHttpUtil {
         Response fileResponse = OkHttpUtil.postJson(params, heads, fileUrl);
         logger.info("fileList:{}", fileResponse.body().string());
         //文件上传 (post file)
-        String fileUploadUrl = "http://" + host + "/crmcommon/file/upload";
+        String fileUploadUrl = "###";
         File file = new File("C:\\Users\\kingdee\\Desktop\\1.xlsx");
         Map<String, Object> fileParams = new HashMap<String, Object>();
         fileParams.put("file", file);

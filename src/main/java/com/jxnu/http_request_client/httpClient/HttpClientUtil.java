@@ -191,19 +191,19 @@ public class HttpClientUtil {
     public static void main(String[] args) throws IOException {
         String host = "localhost:8080";
         //登录系统 获取cookie (get 请求)
-        String testLoginUrl = "http://" + host + "/crmcommon/extcontrol/rest/v1/testLogin?oid=579749c500b02c4cdc762f70";
+        String testLoginUrl = "##";
         HttpResponse response = HttpClientUtil.get(testLoginUrl);
         Header header = response.getLastHeader("Set-Cookie");
         String cookie = header.getValue();
         //(post 表单)
-        String formUrl = "http://" + host + "/crmcommon/interapp/rest/v1/callback";
+        String formUrl = "##";
         Map<String, String> formParams = new HashMap<String, String>();
         formParams.put("sn", "sn");
         formParams.put("event", "event");
         HttpResponse formResponse = HttpClientUtil.post(formParams, null, formUrl);
         logger.info("callback:{}", parse((CloseableHttpResponse) formResponse));
         //文档列表 (post json)
-        String fileUrl = "http://" + host + "/crmcommon/file/filelist";
+        String fileUrl = "##";
         Map<String, String> heads = new HashMap<String, String>();
         heads.put("Cookie", cookie);
         Map<String, String> params = new HashMap<String, String>();
@@ -212,7 +212,7 @@ public class HttpClientUtil {
         HttpResponse fileResponse = HttpClientUtil.postJson(params, heads, fileUrl);
         logger.info("fileList:{}", parse((CloseableHttpResponse) fileResponse));
         //文件上传 (post file)
-        String fileUploadUrl = "http://" + host + "/crmcommon/file/upload";
+        String fileUploadUrl = "##";
         File file = new File("C:\\Users\\kingdee\\Desktop\\1.xlsx");
         Map<String, Object> fileParams = new HashMap<String, Object>();
         fileParams.put("file", file);
