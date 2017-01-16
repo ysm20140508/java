@@ -9,12 +9,13 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 
 /**
+ * java内部类Unsafe使用
  * @author shoumiao_yao
  * @date 2017-01-03
  */
-public class UnsafeTry {
+public class Unsafe_Try {
     private static final Unsafe THE_UNSAFE;
-    private static final Logger logger = LoggerFactory.getLogger(UnsafeTry.class);
+    private static final Logger logger = LoggerFactory.getLogger(Unsafe_Try.class);
 
     static {
         try {
