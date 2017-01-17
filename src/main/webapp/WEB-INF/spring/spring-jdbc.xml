@@ -37,6 +37,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <aop:aspectj-autoproxy proxy-target-class="true" /> <!--开启cglib动态代理-->
     <!--基于xml事务管理-->
     <tx:advice id="txAdvice" transaction-manager="txManager">
         <tx:attributes>
