@@ -1,8 +1,8 @@
 package com.jxnu.java.OutOfMemory;
 
-import com.jxnu.java.DynamicProxy.cglib.CglibProxy;
 import com.jxnu.java.DynamicProxy.cglib.CglibProxyEvent;
 import com.jxnu.java.DynamicProxy.cglib.CglibProxyInterceptor;
+import net.sf.cglib.proxy.Enhancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,11 @@ public class OutOfMemory3 {
         while (true) {
             index++;
             CglibProxyInterceptor interceptor = new CglibProxyInterceptor();
-            CglibProxyEvent proxyEvent = (CglibProxyEvent) CglibProxy.proxy(CglibProxyEvent.class, interceptor);
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(CglibProxyEvent.class);
+            enhancer.setCallback(interceptor);
+            enhancer.setUseCache(false);
+            CglibProxyEvent event=(CglibProxyEvent)enhancer.create();
             logger.info("index:{}",index);
         }
     }
